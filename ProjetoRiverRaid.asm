@@ -4,6 +4,7 @@
 	score:			.word 0			#pontuacao
 	backgroundColor:	.word 0x0000ff00	#cor do fundo
 	blueColor:		.word 0x0012fff7	#cor do rio
+	greyColor:		.word 0x00aaaaaa
 	planeColor: 		.word 0x00ffff00	#cor do aviao
 	xPlane:			.word 30		#posicao inicial aviao
 
@@ -149,7 +150,6 @@ NewGame:
 		
 		li $a0, 21
 		jal DrawPoint
-		
 	
 	Press1or2:
 		li $a0, 35
@@ -322,32 +322,74 @@ NewGame:
 	BeginGame:
 		#setar tudo
 		jal ClearBoard
+		jal BarraInferior
+		lw $a2, planeColor
 		sw $zero, 0xFFFF0004	#reseta a tecla pressionada
 		lw $s0, xPlane			#carrega posicao inicial do aviao
-		
+		li $s1, 0		#flag tiro
+		li $s2, 43		#y tiro
+		li $s4, 0		#x tiro
 GameLoop:
-		#jal ClearBoard			#limpa a tela
 		jal DrawAviao			#desenha o aviao
+		
 		lw $t1, 0xFFFF0004		#verifica qual tecla foi pressionada
 		beq $t1, 0x00000031, MoveEsquerda # branch se apertar 1
 		beq $t1, 0x00000032, MoveDireita # branch se apertar 2			
+		beq $t1, 0x00000033, DisparaTiro
+		li $a0, 10	#
+		li $v0, 32	# espera 250milisegundos
+		syscall	
+		jal AtualizaTiro
 		j GameLoop
+		
+	DisparaTiro:
+		sw $zero, 0xFFFF0004
+		beq $s1, 1, GameLoop
+		li $s1, 1
+		addi $s4, $s0, 0
+		j GameLoop
+			
+	AtualizaTiro:
+		beq $s1, 1, tiro
+		jr $ra
+		tiro:
+			sw $ra, 0($sp)
+			lw $a2, backgroundColor
+			jal DrawTiro
+			subi $s2, $s2, 1
+			subi $s3, $s3, 1
+			lw $a2, planeColor #Cor
+			beq $s2, 0, someTiro
+			jal DrawTiro
+			lw $ra, 0($sp)
+			jr $ra
+		someTiro:
+			li $s1, 0
+			li $s2, 40
+			lw $ra, 0($sp)
+			jr $ra
 		
 	MoveDireita:
 		beq $s0, 59, GameLoop
 		sw $zero, 0xFFFF0004
+		lw $a2, backgroundColor
+		jal DrawAviao
+		lw $a2, planeColor #Cor
 		addi $s0, $s0, 1
 		j GameLoop
 
 	MoveEsquerda:
 		beq $s0, 4, GameLoop
 		sw $zero, 0xFFFF0004
+		lw $a2, backgroundColor
+		jal DrawAviao
+		lw $a2, planeColor #Cor
 		subi $s0, $s0, 1
 		j GameLoop
 		
 ClearBoard:
 		lw $t0, backgroundColor			#Carrega a cor
-		li $t1, 8192 				#Numero de pixels no display
+		li $t1, 32768 				#Numero de pixels no display
 	StartCLoop:
 		subi $t1, $t1, 4
 		addu $t2, $t1, $gp			
@@ -356,48 +398,90 @@ ClearBoard:
 		j StartCLoop
 	EndCLoop:
 		jr $ra
+BarraInferior:
+		sw $ra, 0($sp)
 		
+		li $a0, 0
+		li $a1, 55
+		lw $a2, greyColor
+		li $a3, 63
+		jal DrawHorizontalLine
+		
+		addi $a1, $a1, 1
+		jal DrawHorizontalLine
+		
+		addi $a1, $a1, 1
+		jal DrawHorizontalLine
+		
+		addi $a1, $a1, 1
+		jal DrawHorizontalLine
+		
+		addi $a1, $a1, 1
+		jal DrawHorizontalLine
+		
+		addi $a1, $a1, 1
+		jal DrawHorizontalLine
+		
+		addi $a1, $a1, 1
+		jal DrawHorizontalLine
+		
+		addi $a1, $a1, 1
+		jal DrawHorizontalLine
+		
+		lw $ra, 0($sp)
+		jr $ra
+		
+DrawTiro:
+		addi $sp, $sp, -4
+		sw $ra, 0($sp)
+		addi $a0, $s4, 0
+		addi $a1, $s2, 0
+		addi $a3, $s2, 3
+		jal DrawVerticalLine
+		lw $ra, 0($sp)
+		addi $sp, $sp, 4
+		jr $ra
+	
 DrawAviao:
 		add $a0, $s0, 0
 		sw $ra, 0($sp)
-		li $a1, 22	#Y0
-		lw $a2, planeColor #Cor
-		li $a3, 30				#Y1
+		li $a1, 45	#Y0
+		li $a3, 53				#Y1
 		jal DrawVerticalLine
 		
 		addi $a0, $a0, 1
-		li $a1, 24
-		li $a3, 26
+		li $a1, 47
+		li $a3, 49
 		jal DrawVerticalLine
 		
 		subi $a0, $a0, 2
 		jal DrawVerticalLine
 		
 		subi $a0, $a0, 1
-		li $a1, 25
-		li $a3, 27
+		li $a1, 48
+		li $a3, 50
 		jal DrawVerticalLine
 		
 		addi $a0, $a0, 4
 		jal DrawVerticalLine
 		
 		addi $a0, $a0, 1
-		li $a1, 26
-		li $a3, 28
+		li $a1, 49
+		li $a3, 51
 		jal DrawVerticalLine
 		
 		subi $a0, $a0, 6
 		jal DrawVerticalLine
 		
 		addi $a0, $a0, 2
-		li $a1, 29
+		li $a1, 52
 		jal DrawPoint
 		
 		addi $a0, $a0, 2
 		jal DrawPoint
 		
 		addi $a0, $a0, 1
-		li $a1, 30
+		li $a1, 53
 		jal DrawPoint
 		
 		subi $a0, $a0, 4
@@ -415,7 +499,6 @@ DrawPoint:
 		sll $v0, $v0, 2
 		addu $v0, $v0, $gp
 		sw $a2, ($v0)		# desenha a cor na posicao
-		
 		jr $ra
 
 # $a0 - posicao inicial em x
@@ -423,24 +506,17 @@ DrawPoint:
 # $a2 - cor
 # $a3 - posicao final em x
 DrawHorizontalLine:
-		
 		addi $sp, $sp, -4
    		sw $ra, 0($sp)
-		
 		sub $t9, $a3, $a0
 		move $t1, $a0
-		
 	HorizontalLoop:
-		
 		add $a0, $t1, $t9
 		jal DrawPoint
 		addi $t9, $t9, -1
-		
 		bge $t9, 0, HorizontalLoop
-		
 		lw $ra, 0($sp)		# arruma o ReturnAdress
    		addi $sp, $sp, 4
-
 		jr $ra
 		
 # $a0 - posicao em x
@@ -448,22 +524,15 @@ DrawHorizontalLine:
 # $a2 - cor
 # $a3 - posicao final em y
 DrawVerticalLine:
-
 		addi $sp, $sp, -4
    		sw $ra, 0($sp)
-		
 		sub $t9, $a3, $a1
 		move $t1, $a1
-		
 	VerticalLoop:
-		
 		add $a1, $t1, $t9
 		jal DrawPoint
 		addi $t9, $t9, -1
-		
 		bge $t9, 0, VerticalLoop
-		
 		lw $ra, 0($sp)		# arruma o ReturnAdress
    		addi $sp, $sp, 4
-   		
 		jr $ra
