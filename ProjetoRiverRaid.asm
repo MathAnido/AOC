@@ -1,6 +1,5 @@
 .data
 	ySpeed:			.word 1			#velocidade do aviao em Y
-	xSpeed:			.word 1			#velocidade do aviao em X
 	score:			.word 0			#pontuacao
 	backgroundColor:	.word 0x0000ff00	#cor do fundo
 	blueColor:		.word 0x0012fff7	#cor do rio
@@ -319,18 +318,17 @@ NewGame:
 		
 		j PressStart    # Loop
 
-	BeginGame:			#setar tudo
+	BeginGame:			#Setar configuracoes do jogo
+		sw $zero, 0xFFFF0004	#reseta a tecla pressionada
 		jal ClearBoard
 		jal BarraInferior
 		lw $a2, planeColor
-		sw $zero, 0xFFFF0004	#reseta a tecla pressionada
+		jal DrawAviao			#desenha o aviao
 		lw $s0, xPlane		#carrega posicao inicial do aviao
 		li $s1, 0		#flag tiro
 		li $s2, 43		#y tiro
 		li $s4, 0		#x tiro
 GameLoop:
-		jal DrawAviao			#desenha o aviao
-		
 		lw $t1, 0xFFFF0004		#verifica qual tecla foi pressionada
 		beq $t1, 0x00000031, MoveEsquerda # branch se apertar 1
 		beq $t1, 0x00000032, MoveDireita # branch se apertar 2			
@@ -444,8 +442,9 @@ DrawTiro:
 		jr $ra
 	
 DrawAviao:
-		add $a0, $s0, 0
+		addi $sp, $sp, -4
 		sw $ra, 0($sp)
+		add $a0, $s0, 0
 		li $a1, 45	#Y0
 		li $a3, 53				#Y1
 		jal DrawVerticalLine
@@ -489,6 +488,7 @@ DrawAviao:
 		jal DrawPoint
 		
 		lw $ra, 0($sp)
+		addi $sp, $sp, 4
 		jr $ra
 				
 # $a0 - posicao em x

@@ -1,0 +1,7 @@
+- Inimigos e Combustivel
+- Mapa
+- Colisao tiro
+- Colisao aviao
+- Combustivel / Barra inferior
+- GameOver
+- Pontuação
