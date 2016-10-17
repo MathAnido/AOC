@@ -319,13 +319,12 @@ NewGame:
 		
 		j PressStart    # Loop
 
-	BeginGame:
-		#setar tudo
+	BeginGame:			#setar tudo
 		jal ClearBoard
 		jal BarraInferior
 		lw $a2, planeColor
 		sw $zero, 0xFFFF0004	#reseta a tecla pressionada
-		lw $s0, xPlane			#carrega posicao inicial do aviao
+		lw $s0, xPlane		#carrega posicao inicial do aviao
 		li $s1, 0		#flag tiro
 		li $s2, 43		#y tiro
 		li $s4, 0		#x tiro
@@ -399,6 +398,7 @@ ClearBoard:
 	EndCLoop:
 		jr $ra
 BarraInferior:
+		addi $sp, $sp, -4
 		sw $ra, 0($sp)
 		
 		li $a0, 0
@@ -429,6 +429,7 @@ BarraInferior:
 		jal DrawHorizontalLine
 		
 		lw $ra, 0($sp)
+		addi $sp, $sp, 4
 		jr $ra
 		
 DrawTiro:
