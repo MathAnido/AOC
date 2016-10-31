@@ -1,20 +1,20 @@
 .data
-	ySpeed:			.word 1			#velocidade do aviao em Y
-	score:			.word 0			#pontuacao
+	ySpeed:				.word 1				#velocidade do aviao em Y
+	score:				.word 0				#pontuacao
 	backgroundColor:	.word 0x0000ff00	#cor do fundo
-	blueColor:		.word 0x0012fff7	#cor do rio
-	greyColor:		.word 0x00aaaaaa
+	blueColor:			.word 0x0012fff7	#cor do rio
+	greyColor:			.word 0x00aaaaaa	#cor do barrra inferior
 	planeColor: 		.word 0x00ffff00	#cor do aviao
-	xPlane:			.word 30		#posicao inicial aviao
+	xPlane:				.word 30			#posicao inicial do aviao
 
 .text
 NewGame:
 	jal ClearBoard
 	RIVERRAID:
-		li $a0, 10	#X
-		li $a1, 10	#Y0
-		lw $a2, blueColor #Cor
-		li $a3, 16				#Y1
+		li $a0, 10							#Poricao em x
+		li $a1, 10							#Posicao Y inicial
+		lw $a2, blueColor 					#Carrega a cor
+		li $a3, 16							#Posicao Y final
 		jal DrawVerticalLine
 		
 		li $a0, 16
@@ -309,39 +309,39 @@ NewGame:
 		li $a0, 18
 		jal DrawPoint
 	PressStart:
-		lw $t1, 0xFFFF0004		# verifica qual tecla foi pressionada
-		beq $t1, 0x00000031, BeginGame # branch se apertar 1
+		lw $t1, 0xFFFF0004					#Verifica qual tecla foi pressionada
+		beq $t1, 0x00000031, BeginGame 		#Branch se apertar 1
 		
-		li $a0, 250	#
-		li $v0, 32	# espera 250milisegundos
-		syscall		#
+		li $a0, 250							#
+		li $v0, 32							#Espera 250milisegundos
+		syscall								#
 		
-		j PressStart    # Loop
+		j PressStart    					#Loop
 
-	BeginGame:			#Setar configuracoes do jogo
-		sw $zero, 0xFFFF0004	#reseta a tecla pressionada
+	BeginGame:								#Setar configuracoes do jogo
+		sw $zero, 0xFFFF0004				#Reseta a tecla pressionada
 		jal ClearBoard
 		jal BarraInferior
 		lw $a2, planeColor
-		jal DrawAviao			#desenha o aviao
-		lw $s0, xPlane		#carrega posicao inicial do aviao
-		li $s1, 0		#flag tiro
-		li $s2, 43		#y tiro
-		li $s4, 0		#x tiro
+		jal DrawAviao						#Desenha o aviao
+		lw $s0, xPlane						#Carrega posicao inicial do aviao
+		li $s1, 0							#Flag tiro
+		li $s2, 43							#Y tiro
+		li $s4, 0							#X tiro
 GameLoop:
-		lw $t1, 0xFFFF0004		#verifica qual tecla foi pressionada
-		beq $t1, 0x00000031, MoveEsquerda # branch se apertar 1
-		beq $t1, 0x00000032, MoveDireita # branch se apertar 2			
-		beq $t1, 0x00000033, DisparaTiro
-		li $a0, 10	#
-		li $v0, 32	# espera 250milisegundos
-		syscall	
+		lw $t1, 0xFFFF0004					#Verifica qual tecla foi pressionada
+		beq $t1, 0x00000031, MoveEsquerda 	#Branch se apertar 1
+		beq $t1, 0x00000032, MoveDireita 	#Branch se apertar 2			
+		beq $t1, 0x00000033, DisparaTiro	#Branch se apertar 3
+		li $a0, 10							#
+		li $v0, 32							#Espera 10milisegundos
+		syscall								#
 		jal AtualizaTiro
 		j GameLoop
 		
 	DisparaTiro:
-		sw $zero, 0xFFFF0004
-		beq $s1, 1, GameLoop
+		sw $zero, 0xFFFF0004				#Apaga tecla pressionada
+		beq $s1, 1, GameLoop				#Volta para o GameLoop se já existe um tiro na tela
 		li $s1, 1
 		addi $s4, $s0, 0
 		j GameLoop
@@ -355,7 +355,7 @@ GameLoop:
 			jal DrawTiro
 			subi $s2, $s2, 1
 			subi $s3, $s3, 1
-			lw $a2, planeColor #Cor
+			lw $a2, planeColor 				#Carrega a cor
 			beq $s2, 0, someTiro
 			jal DrawTiro
 			lw $ra, 0($sp)
@@ -371,7 +371,7 @@ GameLoop:
 		sw $zero, 0xFFFF0004
 		lw $a2, backgroundColor
 		jal DrawAviao
-		lw $a2, planeColor #Cor
+		lw $a2, planeColor 					#Carrega a cor
 		addi $s0, $s0, 1
 		j GameLoop
 
@@ -380,13 +380,13 @@ GameLoop:
 		sw $zero, 0xFFFF0004
 		lw $a2, backgroundColor
 		jal DrawAviao
-		lw $a2, planeColor #Cor
+		lw $a2, planeColor 					#Carrega a cor
 		subi $s0, $s0, 1
 		j GameLoop
 		
 ClearBoard:
-		lw $t0, backgroundColor			#Carrega a cor
-		li $t1, 32768 				#Numero de pixels no display
+		lw $t0, backgroundColor				#Carrega a cor
+		li $t1, 32768 						#Numero de pixels no display
 	StartCLoop:
 		subi $t1, $t1, 4
 		addu $t2, $t1, $gp			
@@ -445,8 +445,8 @@ DrawAviao:
 		addi $sp, $sp, -4
 		sw $ra, 0($sp)
 		add $a0, $s0, 0
-		li $a1, 45	#Y0
-		li $a3, 53				#Y1
+		li $a1, 45	
+		li $a3, 53				
 		jal DrawVerticalLine
 		
 		addi $a0, $a0, 1
@@ -495,11 +495,11 @@ DrawAviao:
 # $a1 - posicao em y
 # $a2 - cor	
 DrawPoint:
-		sll $t0, $a1, 6   # multiplica a coordenada Y por 64
+		sll $t0, $a1, 6   					#Multiplica a coordenada Y por 64
 		addu $v0, $a0, $t0
 		sll $v0, $v0, 2
 		addu $v0, $v0, $gp
-		sw $a2, ($v0)		# desenha a cor na posicao
+		sw $a2, ($v0)						#Desenha a cor na posicao
 		jr $ra
 
 # $a0 - posicao inicial em x
@@ -516,7 +516,7 @@ DrawHorizontalLine:
 		jal DrawPoint
 		addi $t9, $t9, -1
 		bge $t9, 0, HorizontalLoop
-		lw $ra, 0($sp)		# arruma o ReturnAdress
+		lw $ra, 0($sp)						#Arruma o ReturnAdress
    		addi $sp, $sp, 4
 		jr $ra
 		
@@ -534,6 +534,6 @@ DrawVerticalLine:
 		jal DrawPoint
 		addi $t9, $t9, -1
 		bge $t9, 0, VerticalLoop
-		lw $ra, 0($sp)		# arruma o ReturnAdress
+		lw $ra, 0($sp)						#Arruma o ReturnAdress
    		addi $sp, $sp, 4
 		jr $ra
