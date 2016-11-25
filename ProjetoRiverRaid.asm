@@ -113,6 +113,7 @@ NewGame:
 		li $a1, 13
 		jal DrawHorizontalLine
 		
+		
 		li $a1, 10
 		li $a0, 24
 		li $a3, 27
