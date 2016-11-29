@@ -1,20 +1,20 @@
 .data
 	ySpeed:				.word 1				#velocidade do aviao em Y
 	score:				.word 0				#pontuacao
-	backgroundColor:	.word 0x0000ff00	#cor do fundo
-	blueColor:			.word 0x0012fff7	#cor do rio
-	greyColor:			.word 0x00aaaaaa	#cor do barrra inferior
-	planeColor: 		.word 0x00ffff00	#cor do aviao
+	backgroundColor:		.word 0x0000ff00		#cor do fundo
+	blueColor:			.word 0x0012fff7		#cor do rio
+	greyColor:			.word 0x00aaaaaa		#cor do barrra inferior
+	planeColor: 			.word 0x00ffff00		#cor do aviao
 	xPlane:				.word 30			#posicao inicial do aviao
 
 .text
 NewGame:
 	jal ClearBoard
 	RIVERRAID:
-		li $a0, 10							#Poricao em x
-		li $a1, 10							#Posicao Y inicial
+		li $a0, 10						#Poricao em x
+		li $a1, 10						#Posicao Y inicial
 		lw $a2, blueColor 					#Carrega a cor
-		li $a3, 16							#Posicao Y final
+		li $a3, 16						#Posicao Y final
 		jal DrawVerticalLine
 		
 		li $a0, 16
@@ -311,38 +311,38 @@ NewGame:
 		jal DrawPoint
 	PressStart:
 		lw $t1, 0xFFFF0004					#Verifica qual tecla foi pressionada
-		beq $t1, 0x00000031, BeginGame 		#Branch se apertar 1
+		beq $t1, 0x00000031, BeginGame 				#Branch se apertar 1
 		
-		li $a0, 250							#
-		li $v0, 32							#Espera 250milisegundos
-		syscall								#
+		li $a0, 250						#
+		li $v0, 32						#Espera 250milisegundos
+		syscall							#
 		
 		j PressStart    					#Loop
 
-	BeginGame:								#Setar configuracoes do jogo
-		sw $zero, 0xFFFF0004				#Reseta a tecla pressionada
+	BeginGame:							#Setar configuracoes do jogo
+		sw $zero, 0xFFFF0004					#Reseta a tecla pressionada
 		jal ClearBoard
 		jal BarraInferior
 		lw $a2, planeColor
 		jal DrawAviao						#Desenha o aviao
 		lw $s0, xPlane						#Carrega posicao inicial do aviao
-		li $s1, 0							#Flag tiro
-		li $s2, 43							#Y tiro
-		li $s4, 0							#X tiro
+		li $s1, 0						#Flag tiro
+		li $s2, 43						#Y tiro
+		li $s4, 0						#X tiro
 GameLoop:
 		lw $t1, 0xFFFF0004					#Verifica qual tecla foi pressionada
-		beq $t1, 0x00000031, MoveEsquerda 	#Branch se apertar 1
-		beq $t1, 0x00000032, MoveDireita 	#Branch se apertar 2			
-		beq $t1, 0x00000033, DisparaTiro	#Branch se apertar 3
-		li $a0, 10							#
-		li $v0, 32							#Espera 10milisegundos
-		syscall								#
+		beq $t1, 0x00000031, MoveEsquerda 			#Branch se apertar 1
+		beq $t1, 0x00000032, MoveDireita 			#Branch se apertar 2			
+		beq $t1, 0x00000033, DisparaTiro			#Branch se apertar 3
+		li $a0, 10						#
+		li $v0, 32						#Espera 10milisegundos
+		syscall							#
 		jal AtualizaTiro
 		j GameLoop
 		
 	DisparaTiro:
-		sw $zero, 0xFFFF0004				#Apaga tecla pressionada
-		beq $s1, 1, GameLoop				#Volta para o GameLoop se já existe um tiro na tela
+		sw $zero, 0xFFFF0004					#Apaga tecla pressionada
+		beq $s1, 1, GameLoop					#Volta para o GameLoop se já existe um tiro na tela
 		li $s1, 1
 		addi $s4, $s0, 0
 		j GameLoop
@@ -386,7 +386,7 @@ GameLoop:
 		j GameLoop
 		
 ClearBoard:
-		lw $t0, backgroundColor				#Carrega a cor
+		lw $t0, backgroundColor					#Carrega a cor
 		li $t1, 32768 						#Numero de pixels no display
 	StartCLoop:
 		subi $t1, $t1, 4
