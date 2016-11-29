@@ -324,8 +324,8 @@ NewGame:
 		jal ClearBoard
 		jal BarraInferior
 		lw $a2, planeColor
-		jal DrawAviao						#Desenha o aviao
 		lw $s0, xPlane						#Carrega posicao inicial do aviao
+		jal DrawAviao						#Desenha o aviao
 		li $s1, 0						#Flag tiro
 		li $s2, 43						#Y tiro
 		li $s4, 0						#X tiro
@@ -334,6 +334,9 @@ GameLoop:
 		beq $t1, 0x00000031, MoveEsquerda 			#Branch se apertar 1
 		beq $t1, 0x00000032, MoveDireita 			#Branch se apertar 2			
 		beq $t1, 0x00000033, DisparaTiro			#Branch se apertar 3
+		lw $t1, score
+		addi $t1, $t1, 5
+		sw $t1, score		
 		li $a0, 10						#
 		li $v0, 32						#Espera 10milisegundos
 		syscall							#
@@ -374,6 +377,7 @@ GameLoop:
 		jal DrawAviao
 		lw $a2, planeColor 					#Carrega a cor
 		addi $s0, $s0, 1
+		jal DrawAviao
 		j GameLoop
 
 	MoveEsquerda:
@@ -383,6 +387,7 @@ GameLoop:
 		jal DrawAviao
 		lw $a2, planeColor 					#Carrega a cor
 		subi $s0, $s0, 1
+		jal DrawAviao
 		j GameLoop
 		
 ClearBoard:
@@ -404,6 +409,12 @@ BarraInferior:
 		li $a1, 55
 		lw $a2, greyColor
 		li $a3, 63
+		jal DrawHorizontalLine
+		
+		addi $a1, $a1, 1
+		jal DrawHorizontalLine
+		
+		addi $a1, $a1, 1
 		jal DrawHorizontalLine
 		
 		addi $a1, $a1, 1
