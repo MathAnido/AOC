@@ -1,23 +1,211 @@
 .data
+
 	ySpeed:				.word 1				#velocidade do aviao em Y
 	score:				.word 0				#pontuacao
+	xPlane:				.word 64			#posicao inicial do aviao				
+	
+	##### Cores #####
 	backgroundColor:		.word 0x0000ff00		#cor do fundo
 	blueColor:			.word 0x0012fff7		#cor do rio
 	greyColor:			.word 0x00aaaaaa		#cor do barrra inferior
 	planeColor: 			.word 0x00ffff00		#cor do aviao
 	fuelColor:			.word 0x00ffffff		#cor do combutivel / barra
-	xPlane:				.word 64			#posicao inicial do aviao
-
 .text
 NewGame:
 	jal ClearBoard
-	RIVERRAID:
-		li $a0, 0
-		li $a1, 0
+	riverraid:
+		li $a0, 20
 		lw $a2, blueColor
-		jal DrawPoint
-	
-	Press1or2:
+		li $a1, 20
+		li $a3, 40
+		jal DrawVerticalLine
+		li $a0, 21
+		jal DrawVerticalLine
+		li $a0, 31
+		li $a1, 22
+		li $a3, 30
+		jal DrawVerticalLine
+		li $a0, 32
+		jal DrawVerticalLine
+		li $a0, 31
+		li $a1, 33
+		li $a3, 40
+		jal DrawVerticalLine
+		li $a0, 32
+		jal DrawVerticalLine
+		li $a0, 20
+		li $a1, 20
+		li $a3, 30
+		jal DrawHorizontalLine
+		li $a1, 21
+		jal DrawHorizontalLine
+		li $a1, 31
+		jal DrawHorizontalLine
+		li $a1, 32
+		jal DrawHorizontalLine
+		
+		li $a0, 36
+		li $a1, 20
+		li $a3, 40
+		jal DrawVerticalLine
+		li $a0, 37
+		jal DrawVerticalLine
+		
+		li $a0, 41
+		li $a1, 20
+		li $a3, 36
+		jal DrawVerticalLine
+		li $a0, 42
+		jal DrawVerticalLine
+		li $a0, 52
+		jal DrawVerticalLine
+		li $a0, 53
+		jal DrawVerticalLine
+		li $a0, 50
+		li $a1, 37
+		li $a3, 38
+		jal DrawVerticalLine
+		li $a0, 51
+		jal DrawVerticalLine
+		li $a0, 43
+		jal DrawVerticalLine
+		li $a0, 44
+		jal DrawVerticalLine
+		li $a0, 45
+		li $a1, 40
+		li $a3, 49
+		jal DrawHorizontalLine
+		li $a1, 39
+		jal DrawHorizontalLine
+		
+		li $a0, 57
+		li $a1, 20
+		li $a3, 40
+		jal DrawVerticalLine
+		li $a0, 58
+		jal DrawVerticalLine
+		li $a0, 59
+		li $a1, 40
+		li $a3, 67
+		jal DrawHorizontalLine
+		li $a1, 39
+		jal DrawHorizontalLine
+		li $a1, 20
+		jal DrawHorizontalLine
+		li $a1, 21
+		jal DrawHorizontalLine
+		li $a1, 29
+		jal DrawHorizontalLine
+		li $a1, 30
+		jal DrawHorizontalLine
+		
+		li $a0, 71
+		li $a1, 20
+		li $a3, 40
+		jal DrawVerticalLine
+		li $a0, 72
+		jal DrawVerticalLine
+		li $a0, 82
+		li $a1, 22
+		li $a3, 30
+		jal DrawVerticalLine
+		li $a0, 83
+		jal DrawVerticalLine
+		li $a0, 82
+		li $a1, 33
+		li $a3, 40
+		jal DrawVerticalLine
+		li $a0, 83
+		jal DrawVerticalLine
+		li $a0, 71
+		li $a1, 20
+		li $a3, 81
+		jal DrawHorizontalLine
+		li $a1, 21
+		jal DrawHorizontalLine
+		li $a1, 31
+		jal DrawHorizontalLine
+		li $a1, 32
+		jal DrawHorizontalLine
+		
+		li $a0, 57
+		li $a1, 43
+		li $a3, 63
+		jal DrawVerticalLine
+		li $a0, 58
+		jal DrawVerticalLine
+		li $a0, 68
+		li $a1, 45
+		li $a3, 52
+		jal DrawVerticalLine
+		li $a0, 69
+		jal DrawVerticalLine
+		li $a0, 68
+		li $a1, 55
+		li $a3, 63
+		jal DrawVerticalLine
+		li $a0, 69
+		jal DrawVerticalLine
+		li $a0, 57
+		li $a1, 43
+		li $a3, 67
+		jal DrawHorizontalLine
+		li $a1, 44
+		jal DrawHorizontalLine
+		li $a1, 53
+		jal DrawHorizontalLine
+		li $a1, 54
+		jal DrawHorizontalLine
+		
+		li $a0, 73
+		li $a1, 45
+		li $a3, 63
+		jal DrawVerticalLine
+		li $a0, 74
+		jal DrawVerticalLine
+		li $a0, 83
+		jal DrawVerticalLine
+		li $a0, 84
+		jal DrawVerticalLine
+		li $a0, 75
+		li $a1, 43
+		li $a3, 82
+		jal DrawHorizontalLine
+		li $a1, 44
+		jal DrawHorizontalLine
+		li $a1, 53
+		jal DrawHorizontalLine
+		li $a1, 54
+		jal DrawHorizontalLine
+		
+		li $a0, 88
+		li $a1, 43
+		li $a3, 63
+		jal DrawVerticalLine
+		li $a0, 89
+		jal DrawVerticalLine
+		
+		li $a0, 93
+		jal DrawVerticalLine
+		li $a0, 94
+		jal DrawVerticalLine
+		li $a1, 43
+		li $a0, 95
+		li $a3, 103
+		jal DrawHorizontalLine
+		li $a1, 44
+		jal DrawHorizontalLine
+		li $a1, 62
+		jal DrawHorizontalLine
+		li $a1, 63
+		jal DrawHorizontalLine
+		
+		li $a0, 104
+		li $a1, 45
+		li $a3, 61
+		jal DrawVerticalLine
+		li $a0, 105
+		jal DrawVerticalLine
 		
 	PressStart:
 		lw $t1, 0xFFFF0004					#Verifica qual tecla foi pressionada
@@ -31,103 +219,24 @@ NewGame:
 
 	BeginGame:							#Setar configuracoes do jogo
 		sw $zero, 0xFFFF0004					#Reseta a tecla pressionada
-		#jal ClearBoard
-		jal BarraInferior
+		jal ClearBoard
+		#jal BarraInferior
 		lw $a2, planeColor
 		lw $s0, xPlane						#Carrega posicao inicial do aviao
-		jal DrawAviao						#Desenha o aviao
+		#jal DrawAviao						#Desenha o aviao
 		li $s1, 0						#Flag tiro
 		li $s2, 41						#Y tiro
 		li $s4, 0						#X tiro
-GameLoop:
+	GameLoop:
 		lw $t1, 0xFFFF0004					#Verifica qual tecla foi pressionada
-		beq $t1, 0x00000031, MoveEsquerda 			#Branch se apertar 1
-		beq $t1, 0x00000032, MoveDireita 			#Branch se apertar 2			
-		beq $t1, 0x00000033, DisparaTiro			#Branch se apertar 3		
+		#beq $t1, 0x00000031, MoveEsquerda 			#Branch se apertar 1
+		#beq $t1, 0x00000032, MoveDireita 			#Branch se apertar 2			
+		#beq $t1, 0x00000033, DisparaTiro			#Branch se apertar 3		
 		li $a0, 10						#
 		li $v0, 32						#Espera 10milisegundos
 		syscall							#
-		jal AtualizaTiro
 		j GameLoop
-		
-	DisparaTiro:
-		sw $zero, 0xFFFF0004					#Apaga tecla pressionada
-		beq $s1, 1, GameLoop					#Volta para o GameLoop se já existe um tiro na tela
-		li $s1, 1
-		addi $s4, $s0, 0
-		j GameLoop
-			
-	AtualizaTiro:
-		beq $s1, 1, tiro
-		jr $ra
-		tiro:
-			sw $ra, 0($sp)
-			lw $a2, backgroundColor
-			jal DrawTiro
-			subi $s2, $s2, 1
-			subi $s3, $s3, 1
-			lw $a2, planeColor 				#Carrega a cor
-			beq $s2, 0, someTiro
-			jal DrawTiro
-			lw $ra, 0($sp)
-			jr $ra
-		someTiro:
-			li $s1, 0
-			li $s2, 41
-			lw $ra, 0($sp)
-			jr $ra
-		
-	MoveDireita:
-		beq $s0, 59, GameLoop
-		sw $zero, 0xFFFF0004
-		lw $a2, backgroundColor
-		jal DrawAviao
-		lw $a2, planeColor 					#Carrega a cor
-		addi $s0, $s0, 1
-		jal DrawAviao
-		j GameLoop
-
-	MoveEsquerda:
-		beq $s0, 4, GameLoop
-		sw $zero, 0xFFFF0004
-		lw $a2, backgroundColor
-		jal DrawAviao
-		lw $a2, planeColor 					#Carrega a cor
-		subi $s0, $s0, 1
-		jal DrawAviao
-		j GameLoop
-BarraInferior:
-		addi $sp, $sp, -4
-		sw $ra, 0($sp)
-		
-		li $a0, 0
-		li $a1, 127
-		lw $a2, greyColor
-		li $a3, 127
-		jal DrawHorizontalLine
-		
-		lw $ra, 0($sp)
-		addi $sp, $sp, 4
-		jr $ra
-		
-DrawTiro:
-		addi $sp, $sp, -4
-		sw $ra, 0($sp)
-		addi $a0, $s4, 0
-		addi $a1, $s2, 0
-		addi $a3, $s2, 3
-		jal DrawVerticalLine
-		lw $ra, 0($sp)
-		addi $sp, $sp, 4
-		jr $ra
-	
-DrawAviao:
-		addi $sp, $sp, -4
-		sw $ra, 0($sp)
-		
-		addi $sp, $sp, 4
-		jr $ra
-				
+								
 # $a0 - posicao em x
 # $a1 - posicao em y
 # $a2 - cor	
@@ -173,15 +282,14 @@ DrawVerticalLine:
 		bge $t9, 0, VerticalLoop
 		lw $ra, 0($sp)						#Arruma o ReturnAdress
    		addi $sp, $sp, 4
-		jr $ra
-		
+		jr $ra	
 ClearBoard:
-		lw $t0, backgroundColor					#Carrega a cor
-		li $t1, 65536						#Numero de pixels no display
+		lw $t0, backgroundColor
+		li $t1, 65524 # O Numero de pixels do Display - 16136
 	StartCLoop:
 		subi $t1, $t1, 4
-		addu $t2, $t1, $gp			
-		sw $t0, 0($t2)
+		addu $t2, $t1, $gp
+		sw $t0, ($t2)
 		beqz $t1, EndCLoop
 		j StartCLoop
 	EndCLoop:
