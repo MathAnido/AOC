@@ -3,7 +3,11 @@
 #				Variaveis				#
 #########################################################################
 	ySpeed:				.word 1				#velocidade do aviao em Y
-	score:				.word 0			#pontuacao
+	score5:				.word 0
+	score4:				.word 0
+	score3:				.word 0
+	score2:				.word 0
+	score:				.word 0
 	xPlane:				.word 64			#posicao inicial do aviao				
 	fuel:				.word 100			#combustivel
 	flagComb:			.word 0
@@ -247,16 +251,33 @@ Inicializa:
 		jal DesceCombustivel
 		jal Ponteiro		
 		jal DrawScore		#Verifica qual tecla foi pressionada
+		#jal SomaPonto
 		#beq $t1, 0x00000031, MoveEsquerda 			#Branch se apertar 1
 		#beq $t1, 0x00000032, MoveDireita 			#Branch se apertar 2			
 		#beq $t1, 0x00000033, DisparaTiro			#Branch se apertar 3		
-		lw $t1, score
-		addi $t1, $t1, 1
-		sw $t1, score
-		li $a0, 500						#
+		li $a0, 50						#
 		li $v0, 32						#Espera 10milisegundos
 		syscall							#
 		j GameLoop
+SomaPonto:
+		lw $t1, score
+		lw $t2, score2
+		lw $t3, score3
+		lw $t4, score4
+		lw $t5, score5
+		addi $t1, $t1, 1
+		ble $t1, 9, ExitPonto
+	Dezena:
+		subi $t1, $t1, 10
+		addi $t2, $t2, 1
+		bge $t1, 10, Dezena
+	Centena:
+		
+	
+	ExitPonto:
+		sw $t1, score
+		sw $t2, score2
+		jr $ra
 DesceCombustivel:
 		lw $a0, flagComb
 		beqz $a0, flagZero
@@ -306,6 +327,7 @@ BarraInferior:
 		jal DrawVerticalLine
 		jal labelE
 		jal labelF
+		jal labelMeio
 ##############################################################
 #			marcadores
 ##############################################################
@@ -445,6 +467,108 @@ labelF:
 		lw $ra, 0($sp)						#Arruma o ReturnAdress
    		addi $sp, $sp, 4
 		jr $ra
+labelMeio:
+		subi $sp, $sp, 4
+		sw $ra, 0($sp)	
+		ble $a0, 30, saiMeio
+		#	BARRA
+		li $a0, 63
+		lw $a2, fuelColor
+		li $a3, 65
+		li $a1, 119
+		jal DrawHorizontalLine
+		
+		li $a0, 64
+		li $a3, 66
+		li $a1, 118
+		jal DrawHorizontalLine
+
+		li $a0, 65
+		li $a3, 67
+		li $a1, 117
+		jal DrawHorizontalLine
+		
+		li $a0, 66
+		li $a3, 68
+		li $a1, 116
+		jal DrawHorizontalLine
+		
+		li $a0, 67
+		li $a3, 69
+		li $a1, 115
+		jal DrawHorizontalLine
+		
+		li $a0, 62
+		li $a3, 64
+		li $a1, 120
+		jal DrawHorizontalLine
+		
+		li $a0, 61
+		li $a3, 63
+		li $a1, 121
+		jal DrawHorizontalLine
+		
+		li $a0, 60
+		li $a3, 62
+		li $a1, 122
+		jal DrawHorizontalLine
+		
+		li $a0, 59
+		li $a3, 61
+		li $a1, 123
+		jal DrawHorizontalLine
+		#	1
+		li $a0, 59
+		li $a3, 61
+		li $a1, 119
+		jal DrawHorizontalLine
+		
+		li $a1, 115
+		li $a3, 119
+		li $a0, 60
+		jal DrawVerticalLine	
+		
+		li $a0, 59
+		li $a3, 59
+		li $a1, 116
+		jal DrawHorizontalLine
+		
+		
+		#	2
+		li $a0, 68
+		li $a3, 70
+		li $a1, 121
+		jal DrawHorizontalLine
+		
+		li $a1, 119
+		li $a3, 120
+		li $a0, 70
+		jal DrawVerticalLine
+		
+		li $a0, 68
+		li $a3, 70
+		li $a1, 121
+		jal DrawHorizontalLine
+		
+		li $a0, 68
+		li $a3, 70
+		li $a1, 119
+		jal DrawHorizontalLine
+		
+		li $a0, 68
+		li $a3, 70
+		li $a1, 123
+		jal DrawHorizontalLine
+		
+		
+		li $a1, 121
+		li $a3, 122
+		li $a0, 68
+		jal DrawVerticalLine
+	saiMeio:	
+		lw $ra, 0($sp)						#Arruma o ReturnAdress
+   		addi $sp, $sp, 4
+		jr $ra
 Ponteiro:
 		subi $sp, $sp, 4
 		sw $ra, 0($sp)
@@ -466,6 +590,7 @@ Ponteiro:
    		addi $sp, $sp, 4
 		ble $a0, 47, labelE
 		bge $a0, 83, labelF
+		ble $a0, 73, labelMeio
 		jr $ra	
 DrawVida:
 		subi $sp, $sp, 4
@@ -525,8 +650,6 @@ DrawVida:
 #				Digitos
 ###################################################################
 Draw0:
-		subi $sp, $sp, 4
-		sw $ra, 0($sp)
 		li $a1, 119
 		li $a3, 125
 		jal DrawVerticalLine
@@ -537,17 +660,8 @@ Draw0:
 		jal DrawHorizontalLine
 		li $a1, 119
 		jal DrawHorizontalLine
-		lw $a2, greyColor
-		li $a1, 122
-		addi $a0, $a0, 1
-		subi $a3, $a3, 1
-		jal DrawHorizontalLine
-		lw $ra, 0($sp)
-		addi $sp, $sp, 4
-		jr $ra
+		j volta
 Draw1:
-		subi $sp, $sp, 4
-		sw $ra, 0($sp)
 		li $a1, 119
 		li $a3, 125
 		jal DrawVerticalLine
@@ -557,12 +671,8 @@ Draw1:
 		subi $a0, $a0, 1
 		addi $a1, $a1, 1
 		jal DrawPoint
-		lw $ra, 0($sp)
-		addi $sp, $sp, 4
-		jr $ra	
+		j volta	
 Draw2:
-		subi $sp, $sp, 4
-		sw $ra, 0($sp)
 		li $a1, 119
 		li $a3, 122
 		jal DrawVerticalLine
@@ -577,20 +687,8 @@ Draw2:
 		jal DrawHorizontalLine
 		li $a1, 119
 		jal DrawHorizontalLine
-		lw $a2, greyColor
-		li $a1, 120
-		li $a3, 121
-		jal DrawVerticalLine
-		addi $a0, $a0, 4
-		li $a1, 123
-		li $a3, 124
-		jal DrawVerticalLine
-		lw $ra, 0($sp)
-		addi $sp, $sp, 4
-		jr $ra
+		j volta
 Draw3:
-		subi $sp, $sp, 4
-		sw $ra, 0($sp)
 		li $a1, 119
 		li $a3, 125
 		jal DrawVerticalLine
@@ -601,12 +699,8 @@ Draw3:
 		jal DrawHorizontalLine
 		li $a1, 122
 		jal DrawHorizontalLine
-		lw $ra, 0($sp)
-		addi $sp, $sp, 4
-		jr $ra
+		j volta
 Draw4:
-		subi $sp, $sp, 4
-		sw $ra, 0($sp)
 		li $a1, 119
 		li $a3, 125
 		jal DrawVerticalLine
@@ -617,12 +711,8 @@ Draw4:
 		li $a1, 119
 		li $a3, 122
 		jal DrawVerticalLine
-		lw $ra, 0($sp)
-		addi $sp, $sp, 4
-		jr $ra	
+		j volta	
 Draw5:
-		subi $sp, $sp, 4
-		sw $ra, 0($sp)
 		li $a1, 123
 		li $a3, 125
 		jal DrawVerticalLine
@@ -637,12 +727,8 @@ Draw5:
 		jal DrawHorizontalLine
 		li $a1, 119
 		jal DrawHorizontalLine
-		lw $ra, 0($sp)
-		addi $sp, $sp, 4
-		jr $ra
+		j volta
 Draw6:
-		subi $sp, $sp, 4
-		sw $ra, 0($sp)
 		li $a1, 123
 		li $a3, 125
 		jal DrawVerticalLine
@@ -656,24 +742,16 @@ Draw6:
 		jal DrawHorizontalLine
 		li $a1, 119
 		jal DrawHorizontalLine
-		lw $ra, 0($sp)
-		addi $sp, $sp, 4
-		jr $ra	
+		j volta	
 Draw7:
-		subi $sp, $sp, 4
-		sw $ra, 0($sp)
 		li $a1, 119
 		li $a3, 125
 		jal DrawVerticalLine
 		subi $a3, $a0, 0
 		subi $a0, $a0, 3
 		jal DrawHorizontalLine
-		lw $ra, 0($sp)
-		addi $sp, $sp, 4
-		jr $ra	
+		j volta	
 Draw8:
-		subi $sp, $sp, 4
-		sw $ra, 0($sp)
 		li $a1, 120
 		li $a3, 125
 		jal DrawVerticalLine
@@ -686,12 +764,8 @@ Draw8:
 		jal DrawHorizontalLine
 		li $a1, 119
 		jal DrawHorizontalLine
-		lw $ra, 0($sp)
-		addi $sp, $sp, 4
-		jr $ra	
+		j volta	
 Draw9:		
-		subi $sp, $sp, 4
-		sw $ra, 0($sp)
 		li $a1, 120
 		li $a3, 125
 		jal DrawVerticalLine
@@ -703,78 +777,50 @@ Draw9:
 		jal DrawHorizontalLine
 		li $a1, 119
 		jal DrawHorizontalLine
+volta:
 		lw $ra, 0($sp)
 		addi $sp, $sp, 4
-		jr $ra		
+		jr $ra	
+SelecionaNumero:
+		subi $sp, $sp, 4
+		sw $ra, 0($sp)
+		beq $t0, 9, Draw9
+		beq $t0, 8, Draw8
+		beq $t0, 7, Draw7
+		beq $t0, 6, Draw6
+		beq $t0, 5, Draw5
+		beq $t0, 4, Draw4
+		beq $t0, 3, Draw3
+		beq $t0, 2, Draw2
+		beq $t0, 1, Draw1
+		beq $t0, 0, Draw0	
 DrawScore:			
 		subi $sp, $sp, 4
 		sw $ra, 0($sp)
-		lw $t1, score
 		lw $a2, yellow
+		lw $t0, score5
+		beqz $t0, SegundoDigito
 		li $a0, 101
-		ble $t1, 9, QuintoDigito
-		ble $t1, 99, QuartoDigito
-		ble $t1, 999, TerceiroDigito
-		ble $t1, 9999, SegundoDigito
-		sw $ra, SegundoDigito
-		beq $t1, 9, Draw9
-		beq $t1, 8, Draw8
-		beq $t1, 7, Draw7
-		beq $t1, 6, Draw6
-		beq $t1, 5, Draw5
-		beq $t1, 4, Draw4
-		beq $t1, 3, Draw3
-		beq $t1, 2, Draw2
-		beq $t1, 1, Draw1
-		beq $t1, 0, Draw0
+		jal SelecionaNumero		
 	SegundoDigito:
 		li $a0, 107
-		beq $t1, 9, Draw9
-		beq $t1, 8, Draw8
-		beq $t1, 7, Draw7
-		beq $t1, 6, Draw6
-		beq $t1, 5, Draw5
-		beq $t1, 4, Draw4
-		beq $t1, 3, Draw3
-		beq $t1, 2, Draw2
-		beq $t1, 1, Draw1
-		beq $t1, 0, Draw0
+		lw $t0, score4
+		beqz $t0, TerceiroDigito
+		jal SelecionaNumero
 	TerceiroDigito:
 		li $a0, 113
-		beq $t1, 9, Draw9
-		beq $t1, 8, Draw8
-		beq $t1, 7, Draw7
-		beq $t1, 6, Draw6
-		beq $t1, 5, Draw5
-		beq $t1, 4, Draw4
-		beq $t1, 3, Draw3
-		beq $t1, 2, Draw2
-		beq $t1, 1, Draw1
-		beq $t1, 0, Draw0
+		lw $t0, score3
+		beqz $t0, QuartoDigito
+		jal SelecionaNumero
 	QuartoDigito:
 		li $a0, 119
-		beq $t1, 9, Draw9
-		beq $t1, 8, Draw8
-		beq $t1, 7, Draw7
-		beq $t1, 6, Draw6
-		beq $t1, 5, Draw5
-		beq $t1, 4, Draw4
-		beq $t1, 3, Draw3
-		beq $t1, 2, Draw2
-		beq $t1, 1, Draw1
-		beq $t1, 0, Draw0
+		lw $t0, score2
+		beqz $t0, QuintoDigito
+		jal SelecionaNumero
 	QuintoDigito:
 		li $a0, 125
-		beq $t1, 9, Draw9
-		beq $t1, 8, Draw8
-		beq $t1, 7, Draw7
-		beq $t1, 6, Draw6
-		beq $t1, 5, Draw5
-		beq $t1, 4, Draw4
-		beq $t1, 3, Draw3
-		beq $t1, 2, Draw2
-		beq $t1, 1, Draw1
-		beq $t1, 0, Draw0
+		lw $t0, score
+		jal SelecionaNumero
 		lw $ra, 0($sp)
 		addi $sp, $sp, 4
 		jr $ra							

@@ -2,6 +2,6 @@
 - Mapa
 - Colisao tiro
 - Colisao aviao
-- Combustivel / Barra inferior
+- Combustivel / Barra inferior - Done
 - GameOver
-- Pontuação
+- PontuaÃ§Ã£o - Done
