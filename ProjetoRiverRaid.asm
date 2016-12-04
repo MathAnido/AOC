@@ -1,31 +1,36 @@
 .data
 #########################################################################
-#				Variaveis				#
+#				Variaveis					#		Comentarios			#
 #########################################################################
-	ySpeed:				.word 1				#velocidade do aviao em Y
-	score5:				.word 0
-	score4:				.word 0
-	score3:				.word 0
-	score2:				.word 0
-	score:				.word 0
-	xPlane:				.word 64			#posicao inicial do aviao				
-	fuel:				.word 100			#combustivel
-	flagComb:			.word 0
-	lifes:				.word 3
+	ySpeed:				.word 1				# velocidade do aviao em Y	#
+	score5:				.word 0				# primeiro digito score		#
+	score4:				.word 0				# segundo digito score		#
+	score3:				.word 0				# terceiro digito score		#
+	score2:				.word 0				# quarto digito score		#
+	score:				.word 0				# quinto digito score		#
+	xPlane:				.word 64			# posicao inicial do aviao	#			
+	fuel:				.word 100			# nivel combustivel			#
+	flagComb:			.word 0				# flag controle combutivel	#		
+	lifes:				.word 3				# numero de vidas			#
 #########################################################################
-#				Cores					#
+#				Cores						#		Comentarios			#
 #########################################################################
-	backgroundColor:		.word 0x0000ff00		#cor do fundo
-	blueColor:			.word 0x0012fff7		#cor do rio
-	greyColor:			.word 0x00aaaaaa		#cor do barrra inferior
-	planeColor: 			.word 0x00ffff00		#cor do aviao
-	fuelColor:			.word 0x00000000		#cor do combutivel / barra
-	yellow:				.word 0x00ffff00
+	backgroundColor:	.word 0x0000ff00	#cor do fundo				#
+	blueColor:			.word 0x0012fff7	#cor do rio					#
+	greyColor:			.word 0x00aaaaaa	#cor do barrra inferior		#
+	planeColor: 		.word 0x00ffff00	#cor do aviao				#
+	fuelColor:			.word 0x00000000	#cor do combutivel / barra	#
+	yellow:				.word 0x00ffff00	#							#
 #########################################################################
-.text
-Inicializa:
-	jal ClearBoard
-	riverraid:
+.text								
+#########################################################################
+#				Inicializa					#		Comentarios			#
+#########################################################################
+Inicializa:									# inicio do codigo			#
+	riverraid:								# desenha titulo			#
+#########################################################################
+#				R							#		Comentarios			#
+#########################################################################	
 		li $a0, 20
 		lw $a2, blueColor
 		li $a1, 20
@@ -55,14 +60,18 @@ Inicializa:
 		jal DrawHorizontalLine
 		li $a1, 32
 		jal DrawHorizontalLine
-		
+#########################################################################
+#				I							#		Comentarios			#
+#########################################################################
 		li $a0, 36
 		li $a1, 20
 		li $a3, 40
 		jal DrawVerticalLine
 		li $a0, 37
 		jal DrawVerticalLine
-		
+#########################################################################
+#				V							#		Comentarios			#
+#########################################################################
 		li $a0, 41
 		li $a1, 20
 		li $a3, 36
@@ -89,7 +98,9 @@ Inicializa:
 		jal DrawHorizontalLine
 		li $a1, 39
 		jal DrawHorizontalLine
-		
+#########################################################################
+#				E							#		Comentarios			#
+#########################################################################
 		li $a0, 57
 		li $a1, 20
 		li $a3, 40
@@ -110,7 +121,9 @@ Inicializa:
 		jal DrawHorizontalLine
 		li $a1, 30
 		jal DrawHorizontalLine
-		
+#########################################################################
+#				R							#		Comentarios			#
+#########################################################################
 		li $a0, 71
 		li $a1, 20
 		li $a3, 40
@@ -139,7 +152,9 @@ Inicializa:
 		jal DrawHorizontalLine
 		li $a1, 32
 		jal DrawHorizontalLine
-		
+#########################################################################
+#				R							#		Comentarios			#
+#########################################################################
 		li $a0, 57
 		li $a1, 43
 		li $a3, 63
@@ -168,7 +183,9 @@ Inicializa:
 		jal DrawHorizontalLine
 		li $a1, 54
 		jal DrawHorizontalLine
-		
+#########################################################################
+#				A							#		Comentarios			#
+#########################################################################
 		li $a0, 73
 		li $a1, 45
 		li $a3, 63
@@ -189,14 +206,18 @@ Inicializa:
 		jal DrawHorizontalLine
 		li $a1, 54
 		jal DrawHorizontalLine
-		
+#########################################################################
+#				I							#		Comentarios			#
+#########################################################################
 		li $a0, 88
 		li $a1, 43
 		li $a3, 63
 		jal DrawVerticalLine
 		li $a0, 89
 		jal DrawVerticalLine
-		
+#########################################################################
+#				D							#		Comentarios			#
+#########################################################################
 		li $a0, 93
 		jal DrawVerticalLine
 		li $a0, 94
@@ -211,72 +232,132 @@ Inicializa:
 		jal DrawHorizontalLine
 		li $a1, 63
 		jal DrawHorizontalLine
-		
 		li $a0, 104
 		li $a1, 45
 		li $a3, 61
 		jal DrawVerticalLine
 		li $a0, 105
 		jal DrawVerticalLine
-	ResetGame:
-		li $t2, 0
-		sw $t2, flagComb
-		li $t3, 3
-		sw $t3, lifes
-		sw $zero, 0xFFFF0004
-	PressStart:
-		lw $t1, 0xFFFF0004					#Verifica qual tecla foi pressionada
-		beq $t1, 0x00000031, BeginGame 				#Branch se apertar 1
-		
-		li $a0, 250						#
-		li $v0, 32						#Espera 250milisegundos
-		syscall							#
-		
-		j PressStart    					#Loop
-	BeginGame:							#Setar configuracoes do jogo
-		sw $zero, 0xFFFF0004					#Reseta a tecla pressionada
-		jal ClearBoard
-		jal BarraInferior
-		lw $a2, planeColor
-		lw $s0, xPlane						#Carrega posicao inicial do aviao
-		#jal DrawAviao						#Desenha o aviao
-		li $s1, 0						#Flag tiro
-		li $s2, 41						#Y tiro
-		li $s4, 0						#X tiro
-		li $t1, 100
-		sw $t1, fuel
-		jal DrawVida
-	GameLoop:
-		lw $t1, 0xFFFF0004
-		jal DesceCombustivel
-		jal Ponteiro		
-		jal DrawScore		#Verifica qual tecla foi pressionada
-		#jal SomaPonto
-		#beq $t1, 0x00000031, MoveEsquerda 			#Branch se apertar 1
-		#beq $t1, 0x00000032, MoveDireita 			#Branch se apertar 2			
-		#beq $t1, 0x00000033, DisparaTiro			#Branch se apertar 3		
-		li $a0, 50						#
-		li $v0, 32						#Espera 10milisegundos
-		syscall							#
-		j GameLoop
-SomaPonto:
+#########################################################################
+#				ResetGame					#		Comentarios			#
+#########################################################################
+	ResetGame:								# inicializa variaveis 		#
+		li $t2, 0							# reseta flag combutivel	#
+		sw $t2, flagComb					# salva na memoria			#
+		li $t3, 3							# reseta numero vidas		#
+		sw $t3, lifes						# salva na memoria			#
+		sw $zero, 0xFFFF0004				# reseta tecla pressionada	#
+		li $t1, 100							# reseta nivel combustivel	#
+		sw $t1, fuel						# salva na memoria			#
+#########################################################################
+#				PressStart					#		Comentarios			#
+#########################################################################
+	PressStart:								# espera pressionar Start 	#
+		lw $t1, 0xFFFF0004					# pega tecla pressionada	#
+		beq $t1, 0x00000031, BeginGame 		# Branch se apertar 1 		#
+		li $a0, 250							# define tempo (ms)			#
+		li $v0, 32							# comando esperar			#
+		syscall								# chama o comando			#
+		j PressStart    					# Loop 						#
+#########################################################################
+#				BeginGame					#		Comentarios			#
+#########################################################################
+	BeginGame:								# Setar configuracoes		#
+		sw $zero, 0xFFFF0004				# Reseta tecla pressionada	#
+		lw $a2, planeColor					# carrega cor aviao			#
+		lw $s0, xPlane						# carrega posicao aviao		#
+		jal BarraInferior					# desenha barra inferior	#
+		jal DrawVida						# desenha numero vida		#
+		#jal DrawAviao						# desenha o aviao			#
+		li $s1, 0							# reseta flag tiro			#
+		li $s2, 41							# Y tiro					#
+		li $s4, 0							# X tiro					#
+#########################################################################
+#				GameLoop					#		Comentarios			#
+#########################################################################
+	GameLoop:								# loop do jogo				#
+		jal DesceCombustivel				# reduz combustivel			#
+		jal Ponteiro						# desenha Ponteiro			#
+		jal DrawScore						# desenha score				#
+		jal FixScore						# corrige score				#
+		jal VerificaTeclas					# verifica tecla			#
+		li $a0, 50							# define tempo (ms)			#
+		li $v0, 32							# comando esperar			#
+		syscall								# chama o comando			#
+		j GameLoop							# Loop						#
+#########################################################################
+#				GameLoop					#		Comentarios			#
+#########################################################################
+VerificaTeclas:								# verifica teclas			#
+		lw $t1, 0xFFFF0004					# carrega tecla pressionada #
+		beq $t1, 0x00000031, Esquerda		# branch se 1				#
+		beq $t1, 0x00000032, Direita		# branch se 2				#
+		beq $t1, 0x00000033, Tiro			# branch se 3				#
+		j Retorna							# Retorna					#
+#########################################################################
+#				Direita						#		Comentarios			#
+#########################################################################
+	Direita:								# tecla Direita				#
+		lw $t1, score			
+		addi $t1, $t1, 1
+		sw $t1, score
+		j Retorna
+#########################################################################
+#				Esquerda					#		Comentarios			#
+#########################################################################
+	Esquerda:								# tecla Esquerda			#
+		lw $t1, score2						
+		addi $t1, $t1, 3
+		sw $t1, score2
+		j Retorna
+#########################################################################
+#				Tiro						#		Comentarios			#
+#########################################################################
+	Tiro:									# tecla tiro				#
+		lw $t1, score3
+		addi $t1, $t1, 1
+		sw $t1, score3
+#########################################################################
+#				Retorna						#		Comentarios			#
+#########################################################################
+	Retorna:								# volta instrucao anterior	#
+		sw $zero, 0xFFFF0004				# reseta tecla pressionada	#
+		jr $ra								# jump $ra					#
+#########################################################################
+#				FixScore					#		Comentarios			#
+#########################################################################
+FixScore:									# corrige score				#
 		lw $t1, score
 		lw $t2, score2
 		lw $t3, score3
 		lw $t4, score4
 		lw $t5, score5
-		addi $t1, $t1, 1
-		ble $t1, 9, ExitPonto
-	Dezena:
+	Unidade:
+		ble $t1, 9, Dezena	
 		subi $t1, $t1, 10
 		addi $t2, $t2, 1
-		bge $t1, 10, Dezena
+		bge $t1, 10, Unidade
+	Dezena:
+		ble $t2, 9, Centena	
+		subi $t2, $t2, 10
+		addi $t3, $t3, 1
+		bge $t2, 10, Dezena
 	Centena:
-		
-	
+		ble $t3, 9, Milhar
+		subi $t3, $t3, 10
+		addi $t4, $t4, 1
+		bge $t3, 10, Centena
+	Milhar:
+		ble $t4, 9, ExitPonto
+		subi $t4, $t4, 10
+		addi $t5, $t5, 1
+		bge $t4, 10, Milhar
 	ExitPonto:
 		sw $t1, score
 		sw $t2, score2
+		sw $t3, score3
+		sw $t4, score4
+		sw $t5, score5
 		jr $ra
 DesceCombustivel:
 		lw $a0, flagComb
@@ -328,9 +409,9 @@ BarraInferior:
 		jal labelE
 		jal labelF
 		jal labelMeio
-##############################################################
-#			marcadores
-##############################################################
+#########################################################################
+#				Marcadores					#		Comentarios			#
+#########################################################################
 		li $a0, 38
 		li $a1, 111
 		li $a3, 113
@@ -424,9 +505,9 @@ BarraInferior:
 		lw $ra, 0($sp)						#Arruma o ReturnAdress
    		addi $sp, $sp, 4
 		jr $ra
-#############################################################
-#			E
-###########################################################
+#########################################################################
+#				LabelE						#		Comentarios			#
+#########################################################################
 labelE:
 		subi $sp, $sp, 4
 		sw $ra, 0($sp)
@@ -448,6 +529,9 @@ labelE:
 		lw $ra, 0($sp)						#Arruma o ReturnAdress
    		addi $sp, $sp, 4
 		jr $ra
+#########################################################################
+#				LabelF						#		Comentarios			#
+#########################################################################
 labelF:
 		subi $sp, $sp, 4
 		sw $ra, 0($sp)
@@ -467,6 +551,9 @@ labelF:
 		lw $ra, 0($sp)						#Arruma o ReturnAdress
    		addi $sp, $sp, 4
 		jr $ra
+#########################################################################
+#				LabelMeio					#		Comentarios			#
+#########################################################################
 labelMeio:
 		subi $sp, $sp, 4
 		sw $ra, 0($sp)	
@@ -569,6 +656,9 @@ labelMeio:
 		lw $ra, 0($sp)						#Arruma o ReturnAdress
    		addi $sp, $sp, 4
 		jr $ra
+#########################################################################
+#				Ponteiro					#		Comentarios			#
+#########################################################################
 Ponteiro:
 		subi $sp, $sp, 4
 		sw $ra, 0($sp)
@@ -591,7 +681,10 @@ Ponteiro:
 		ble $a0, 47, labelE
 		bge $a0, 83, labelF
 		ble $a0, 73, labelMeio
-		jr $ra	
+		jr $ra
+#########################################################################
+#				DrawVida					#		Comentarios			#
+#########################################################################
 DrawVida:
 		subi $sp, $sp, 4
 		sw $ra, 0($sp)
@@ -646,9 +739,9 @@ DrawVida:
 		lw $ra, 0($sp)						#Arruma o ReturnAdress
    		addi $sp, $sp, 4
    		jr $ra		
-###################################################################
-#				Digitos
-###################################################################
+#########################################################################
+#				Draw0						#		Comentarios			#
+#########################################################################
 Draw0:
 		li $a1, 119
 		li $a3, 125
@@ -660,8 +753,22 @@ Draw0:
 		jal DrawHorizontalLine
 		li $a1, 119
 		jal DrawHorizontalLine
+		lw $a2, greyColor
+		addi $a0, $a0, 3
+		addi $a1, $a1, 1
+		jal DrawPoint
+		subi $a0, $a0, 1
+		addi $a1, $a1, 1
+		jal DrawPoint
+		addi $a0, $a0, 3
+		subi $a3, $a3, 1
+		addi $a1, $a1, 1
+		jal DrawHorizontalLine
 		j volta
-Draw1:
+#########################################################################
+#				Draw1						#		Comentarios			#
+#########################################################################
+Draw1:	
 		li $a1, 119
 		li $a3, 125
 		jal DrawVerticalLine
@@ -671,8 +778,28 @@ Draw1:
 		subi $a0, $a0, 1
 		addi $a1, $a1, 1
 		jal DrawPoint
+		lw $a2, greyColor
+		subi $a0, $a0, 2
+		li $a1, 119
+		jal DrawVerticalLine
+		addi $a0, $a0, 1
+		jal DrawPoint
+		addi $a0, $a0, 1
+		jal DrawPoint
+		addi $a0, $a0, 1
+		jal DrawPoint
+		li $a1, 125
+		jal DrawPoint
+		subi $a0, $a0, 1
+		jal DrawPoint
+		subi $a0, $a0, 1
+		jal DrawPoint
 		j volta	
+#########################################################################
+#				Draw2						#		Comentarios			#
+#########################################################################
 Draw2:
+		lw $a2, yellow
 		li $a1, 119
 		li $a3, 122
 		jal DrawVerticalLine
@@ -688,7 +815,11 @@ Draw2:
 		li $a1, 119
 		jal DrawHorizontalLine
 		j volta
+#########################################################################
+#				Draw3						#		Comentarios			#
+#########################################################################
 Draw3:
+		lw $a2, yellow
 		li $a1, 119
 		li $a3, 125
 		jal DrawVerticalLine
@@ -700,7 +831,11 @@ Draw3:
 		li $a1, 122
 		jal DrawHorizontalLine
 		j volta
+#########################################################################
+#				Draw4						#		Comentarios			#
+#########################################################################
 Draw4:
+		lw $a2, yellow
 		li $a1, 119
 		li $a3, 125
 		jal DrawVerticalLine
@@ -712,7 +847,11 @@ Draw4:
 		li $a3, 122
 		jal DrawVerticalLine
 		j volta	
+#########################################################################
+#				Draw5						#		Comentarios			#
+#########################################################################
 Draw5:
+		lw $a2, yellow
 		li $a1, 123
 		li $a3, 125
 		jal DrawVerticalLine
@@ -728,7 +867,11 @@ Draw5:
 		li $a1, 119
 		jal DrawHorizontalLine
 		j volta
+#########################################################################
+#				Draw6						#		Comentarios			#
+#########################################################################
 Draw6:
+		lw $a2, yellow
 		li $a1, 123
 		li $a3, 125
 		jal DrawVerticalLine
@@ -743,7 +886,11 @@ Draw6:
 		li $a1, 119
 		jal DrawHorizontalLine
 		j volta	
+#########################################################################
+#				Draw7						#		Comentarios			#
+#########################################################################
 Draw7:
+		lw $a2, yellow
 		li $a1, 119
 		li $a3, 125
 		jal DrawVerticalLine
@@ -751,7 +898,11 @@ Draw7:
 		subi $a0, $a0, 3
 		jal DrawHorizontalLine
 		j volta	
+#########################################################################
+#				Draw8						#		Comentarios			#
+#########################################################################
 Draw8:
+		lw $a2, yellow
 		li $a1, 120
 		li $a3, 125
 		jal DrawVerticalLine
@@ -765,7 +916,11 @@ Draw8:
 		li $a1, 119
 		jal DrawHorizontalLine
 		j volta	
+#########################################################################
+#				Draw9						#		Comentarios			#
+#########################################################################
 Draw9:		
+		lw $a2, yellow
 		li $a1, 120
 		li $a3, 125
 		jal DrawVerticalLine
@@ -777,13 +932,20 @@ Draw9:
 		jal DrawHorizontalLine
 		li $a1, 119
 		jal DrawHorizontalLine
+#########################################################################
+#				Volta						#		Comentarios			#
+#########################################################################
 volta:
 		lw $ra, 0($sp)
 		addi $sp, $sp, 4
-		jr $ra	
+		jr $ra
+#########################################################################
+#				SelecionaNumero				#		Comentarios			#
+#########################################################################	
 SelecionaNumero:
 		subi $sp, $sp, 4
 		sw $ra, 0($sp)
+		lw $a2, yellow
 		beq $t0, 9, Draw9
 		beq $t0, 8, Draw8
 		beq $t0, 7, Draw7
@@ -794,28 +956,26 @@ SelecionaNumero:
 		beq $t0, 2, Draw2
 		beq $t0, 1, Draw1
 		beq $t0, 0, Draw0	
+#########################################################################
+#				DrawScore						#		Comentarios			#
+#########################################################################
 DrawScore:			
 		subi $sp, $sp, 4
 		sw $ra, 0($sp)
-		lw $a2, yellow
-		lw $t0, score5
-		beqz $t0, SegundoDigito
 		li $a0, 101
+		lw $t0, score5
 		jal SelecionaNumero		
 	SegundoDigito:
 		li $a0, 107
 		lw $t0, score4
-		beqz $t0, TerceiroDigito
 		jal SelecionaNumero
 	TerceiroDigito:
 		li $a0, 113
 		lw $t0, score3
-		beqz $t0, QuartoDigito
 		jal SelecionaNumero
 	QuartoDigito:
 		li $a0, 119
 		lw $t0, score2
-		beqz $t0, QuintoDigito
 		jal SelecionaNumero
 	QuintoDigito:
 		li $a0, 125
@@ -823,7 +983,7 @@ DrawScore:
 		jal SelecionaNumero
 		lw $ra, 0($sp)
 		addi $sp, $sp, 4
-		jr $ra							
+		jr $ra					
 # $a0 - posicao em x
 # $a1 - posicao em y
 # $a2 - cor	
@@ -869,17 +1029,25 @@ DrawVerticalLine:
 		bge $t9, 0, VerticalLoop
 		lw $ra, 0($sp)						#Arruma o ReturnAdress
    		addi $sp, $sp, 4
-		jr $ra	
-ClearBoard:
-		lw $t0, backgroundColor
-		li $t1, 16136#65524 # O Numero de pixels do Display - 16136
-	StartCLoop:
-		subi $t1, $t1, 4
-		addu $t2, $t1, $gp
-		sw $t0, ($t2)
-		beqz $t1, EndCLoop
-		j StartCLoop
-	EndCLoop:
 		jr $ra
-GameOver:
-		
+#########################################################################
+#				ClearBoard					#		Comentarios			#
+#########################################################################
+ClearBoard:									# limpa tela				#
+		lw $t0, backgroundColor				# carrega cor fundo			#
+		li $t1, 16136						# numero pixel display		#
+	StartCLoop:								# apaga pixel				#
+		subi $t1, $t1, 4					# subtrai 4					#		
+		addu $t2, $t1, $gp					# soma com $gp				#
+		sw $t0, ($t2)						# desenha na tela			#
+		beqz $t1, EndCLoop					# branch se terminou		#
+		j StartCLoop						# loop						#
+	EndCLoop:								# Retorna					#
+		jr $ra								# jump instrucao anterior	#
+#########################################################################
+#				GameOver					#		Comentarios			#
+#########################################################################
+GameOver:									# fim do jogo				#
+		sw $zero, 0xFFFF0004				# reseta tecla pressionada	#
+		j Inicializa						# jump inicio				#
+#########################################################################
